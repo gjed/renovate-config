@@ -1,0 +1,12 @@
+[Unit]
+Description=Renovate dependency update bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/repos/gjed/renovate-config/systemd/renovate.sh
+StandardOutput=journal
+StandardError=journal
+# Give renovate up to 1 hour to finish before killing it
+TimeoutStartSec=3600

@@ -41,7 +41,34 @@ Renovate will pick it up on the next hourly run.
 ## Running locally
 
 ```bash
-LOG_LEVEL=debug renovate --config-file=config.js
+make run          # autodiscover all gjed repos
+make dry-run      # dry-run, no PRs created
+make run-repo REPO=gjed/my-repo   # single repo
 ```
 
-Requires `RENOVATE_TOKEN` env var set to a GitHub PAT with `repo` scope.
+Requires `gh` CLI authenticated (`gh auth login`). Token is resolved at runtime.
+
+## Automation (systemd)
+
+Install the hourly systemd user timer:
+
+```bash
+make install
+```
+
+This copies `systemd/renovate.service` and `systemd/renovate.timer` into
+`~/.config/systemd/user/` and enables the timer immediately.
+
+Check status:
+
+```bash
+systemctl --user status renovate.timer
+systemctl --user status renovate.service
+journalctl --user -u renovate.service -f
+```
+
+Uninstall:
+
+```bash
+make uninstall
+```
