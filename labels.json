@@ -1,0 +1,5 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Default labels for Renovate PRs",
+  "labels": ["dependencies", "renovate"]
+}

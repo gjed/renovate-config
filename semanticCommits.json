@@ -1,0 +1,6 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Use semantic commit messages",
+  "extends": [":semanticCommits"],
+  "semanticCommits": "enabled"
+}

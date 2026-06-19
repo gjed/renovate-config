@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Auto-merge minor and patch updates for all dependencies",
+  "packageRules": [
+    {
+      "description": "Auto-merge minor and patch updates for all dependencies",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Auto-merge pin updates",
+      "matchUpdateTypes": ["pin"],
+      "automerge": true
+    },
+    {
+      "description": "Never auto-merge major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ]
+}
