@@ -4,13 +4,14 @@ Shared [Renovate](https://docs.renovatebot.com/) configuration for all [gjed](ht
 
 ## How it works
 
-Renovate runs as a self-hosted cron job (hourly) on a local machine, using `config.js` to autodiscover all `gjed/*` repositories that contain a `renovate.json`.
+Renovate runs hourly from a GitHub Actions workflow (`.github/workflows/renovate.yml`) as the `gjed-renovate` GitHub App, using `config.js` to autodiscover all `gjed/*` repositories that contain a `renovate.json`. The app is a ruleset bypass actor (`bypass_mode: pull_request`) in [github-configs-public](https://github.com/gjed/github-configs-public), which is what lets it merge its own PRs.
 
 ## Repository structure
 
 | File                       | Purpose                                                       |
 | -------------------------- | ------------------------------------------------------------- |
-| `config.js`                | Self-hosted runner config (autodiscover, platform, caching)   |
+| `config.js`                | Self-hosted runner config (autodiscover, platform, app auth)  |
+| `.github/workflows/`       | Hourly Renovate run, authenticated as the GitHub App          |
 | `default.json`             | Shareable preset — extend this in your repo's `renovate.json` |
 | `automerge.json`           | Auto-merge all minor and patch updates; block majors          |
 | `labels.json`              | PR labels: `dependencies`, `renovate`                         |
@@ -38,7 +39,20 @@ Renovate will pick it up on the next hourly run.
 - **Major updates**: PR created, manual review required
 - **Vulnerability alerts**: PR created immediately, manual review required
 
-## Running locally
+## Running manually
+
+Trigger the workflow from the Actions tab or with `gh workflow run renovate.yml -R gjed/renovate-config`.
+
+## GitHub App credentials
+
+The workflow mints a short-lived installation token on each run from the `renovate` environment, which only accepts runs from protected branches:
+
+| Name                       | Kind     | Value                                |
+| -------------------------- | -------- | ------------------------------------ |
+| `RENOVATE_APP_CLIENT_ID`   | variable | Client ID of the `gjed-renovate` app |
+| `RENOVATE_APP_PRIVATE_KEY` | secret   | Private key (PEM) of the app         |
+
+## Local runs
 
 ```bash
 make run          # autodiscover all gjed repos
@@ -46,29 +60,4 @@ make dry-run      # dry-run, no PRs created
 make run-repo REPO=gjed/my-repo   # single repo
 ```
 
-Requires `gh` CLI authenticated (`gh auth login`). Token is resolved at runtime.
-
-## Automation (systemd)
-
-Install the hourly systemd user timer:
-
-```bash
-make install
-```
-
-This copies `systemd/renovate.service` and `systemd/renovate.timer` into
-`~/.config/systemd/user/` and enables the timer immediately.
-
-Check status:
-
-```bash
-systemctl --user status renovate.timer
-systemctl --user status renovate.service
-journalctl --user -u renovate.service -f
-```
-
-Uninstall:
-
-```bash
-make uninstall
-```
+Local runs authenticate with your personal token (`gh auth token`), not the app, so PRs are authored as you and commits are unsigned. Use `make dry-run` for debugging only.
