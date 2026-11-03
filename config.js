@@ -12,8 +12,12 @@ module.exports = {
   // Require renovate.json in repositories
   requireConfig: "required",
 
-  // Global settings
-  gitAuthor: "Renovate Bot <bot@renovateapp.com>",
+  // Runs as the gjed-renovate GitHub App (installation token). Commits go
+  // through the GitHub API so they are signed by GitHub as the app, which
+  // satisfies required_signatures. gitAuthor must match the app's bot user.
+  username: "gjed-renovate[bot]",
+  gitAuthor: "gjed-renovate[bot] <351878540+gjed-renovate[bot]@users.noreply.github.com>",
+  platformCommit: "enabled",
 
   // Dry run mode - set to null for actual PRs
   dryRun: null,
