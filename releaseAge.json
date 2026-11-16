@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Hold npm updates until they are older than pnpm's minimumReleaseAge (1 day)",
+  "packageRules": [
+    {
+      "description": "Wait 1 day for npm releases, as pnpm rejects younger lockfile entries; create no branch or PR until then",
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "1 day",
+      "internalChecksFilter": "strict"
+    },
+    {
+      "description": "Skip the age check for npm update types that have no release timestamp, which would otherwise be held forever",
+      "matchDatasources": ["npm"],
+      "matchUpdateTypes": ["pin", "bump", "lockfileUpdate", "rollback", "replacement", "lockFileMaintenance"],
+      "minimumReleaseAge": null
+    }
+  ]
+}
