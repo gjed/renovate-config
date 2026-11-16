@@ -15,6 +15,7 @@ Renovate runs hourly from a GitHub Actions workflow (`.github/workflows/renovate
 | `default.json`             | Shareable preset — extend this in your repo's `renovate.json` |
 | `automerge.json`           | Auto-merge all minor and patch updates; block majors          |
 | `labels.json`              | PR labels: `dependencies`, `renovate`                         |
+| `releaseAge.json`          | Hold npm updates for 1 day (pnpm's `minimumReleaseAge`)       |
 | `semanticCommits.json`     | Enforce semantic commit messages                              |
 | `vulnerabilityAlerts.json` | Immediate alerts for CVEs, no automerge                       |
 | `renovate.json`            | Self-referential config for this repo                         |
@@ -38,6 +39,16 @@ Renovate will pick it up on the next hourly run.
 - **Pin updates**: auto-merged
 - **Major updates**: PR created, manual review required
 - **Vulnerability alerts**: PR created immediately, manual review required
+
+## Release age policy
+
+pnpm (v11+) refuses lockfile entries published less than 1 day ago, so a fresh npm bump fails `pnpm install --frozen-lockfile` until the release is a day old. `releaseAge.json` makes Renovate wait the same time:
+
+- **npm updates**: no branch or PR until the release is 1 day old (`minimumReleaseAge: "1 day"`, `internalChecksFilter: "strict"`), plus Renovate's default 30-minute `minimumReleaseAgeBuffer`. Held updates are listed under "Pending Status Checks" in the Dependency Dashboard. If a newer version is still too young, an open PR stays on the last version that passed.
+- **Automerge**: minor, patch and pin PRs only exist once the age has passed, so automerge never merges a release younger than 1 day.
+- **Updates without a release timestamp** (`pin`, `bump`, `lockfileUpdate`, `rollback`, `replacement`, `lockFileMaintenance`): no age check, otherwise Renovate would hold them forever.
+- **Vulnerability alerts**: not delayed. Renovate applies `vulnerabilityAlerts` (`minimumReleaseAge: null`) after all package rules. pnpm still applies its own 1-day limit to the fixed version, so a fix released less than a day ago shows a lockfile error until it is old enough.
+- **Other datasources** (Go modules, GitHub Actions, Docker): no age check. Docker digests from GHCR and other registries without release timestamps would be held forever, and no tool in these repos rejects fresh releases.
 
 ## Running manually
 

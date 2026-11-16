@@ -9,6 +9,7 @@
     ":timezone(Europe/Rome)",
     "github>gjed/renovate-config:automerge",
     "github>gjed/renovate-config:labels",
+    "github>gjed/renovate-config:releaseAge",
     "github>gjed/renovate-config:semanticCommits",
     "github>gjed/renovate-config:vulnerabilityAlerts"
   ]
