@@ -14,6 +14,7 @@ Renovate runs hourly from a GitHub Actions workflow (`.github/workflows/renovate
 | `.github/workflows/`       | Hourly Renovate run, authenticated as the GitHub App          |
 | `default.json`             | Shareable preset — extend this in your repo's `renovate.json` |
 | `automerge.json`           | Auto-merge all minor and patch updates; block majors          |
+| `gomod.json`               | Go: rewrite import paths on majors, run `go mod tidy`         |
 | `labels.json`              | PR labels: `dependencies`, `renovate`                         |
 | `releaseAge.json`          | Hold npm updates for 1 day (pnpm's `minimumReleaseAge`)       |
 | `semanticCommits.json`     | Enforce semantic commit messages                              |
@@ -39,6 +40,10 @@ Renovate will pick it up on the next hourly run.
 - **Pin updates**: auto-merged
 - **Major updates**: PR created, manual review required
 - **Vulnerability alerts**: PR created immediately, manual review required
+
+## Go modules
+
+`gomod.json` sets `postUpdateOptions: ["gomodTidy", "gomodUpdateImportPaths"]` for the `gomod` manager. Without them a major bump such as `go.yaml.in/yaml/v3` to `v4` only edits `go.mod`: the new module is added unused, the old one stays imported, and the PR needs the import migration done by hand. With them Renovate rewrites the imports to the new major path and tidies `go.mod` and `go.sum`. Code that relies on changed behaviour of the new major still needs fixing in the PR.
 
 ## Release age policy
 
