@@ -1,0 +1,11 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Keep Go source and go.mod consistent after module updates",
+  "packageRules": [
+    {
+      "description": "Rewrite import paths on major updates and run go mod tidy, so a /vN bump changes the imports instead of adding an unused requirement",
+      "matchManagers": ["gomod"],
+      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
+    }
+  ]
+}
